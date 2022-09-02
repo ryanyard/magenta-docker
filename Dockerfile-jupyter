@@ -1,0 +1,29 @@
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+FROM ryanyard/magenta:latest-miniconda
+LABEL description="Magenta GPU Container w/ Jupyter Notebooks"
+
+# Put conda in path so we can use conda activate
+ENV CONDA_ALWAYS_YES="true"
+RUN conda update -n base -c defaults conda
+RUN conda create -n magenta python=3.7
+RUN conda init bash
+RUN echo "conda activate magenta" >> ~/.bashrc
+SHELL ["conda", "run", "-n", "magenta", "/bin/bash", "-c"]
+
+# Install other dependencies
+RUN conda install -y -n magenta jupyter
+RUN conda update -y -n magenta nbconvert
+
+#CMD ["conda", "run", "-n", "magenta", "jupyter","notebook","--ip=0.0.0.0","--port=8888","--no-browser","--allow-root", "--notebook-dir=/notebooks"]
